@@ -13,15 +13,19 @@
     // Botões de tema (desktop + mobile)
     const bindTheme = (id) => {
       const el = document.getElementById(id);
-      if (el) el.addEventListener('click', () => window.Theme.toggle());
+      if (el) el.addEventListener('click', (e) => {
+        e.preventDefault();
+        window.Theme.toggle();
+      });
     };
     bindTheme('btnTheme');
     bindTheme('btnThemeMobile');
 
-    // Botão "Nova nota" da sidebar
+    // "Nova nota" da sidebar
     const btnNew = document.getElementById('sidebarNewNote');
     if (btnNew) {
-      btnNew.addEventListener('click', () => {
+      btnNew.addEventListener('click', (e) => {
+        e.preventDefault();
         if (window.location.hash !== '#/notes') window.location.hash = '#/notes';
         setTimeout(() => {
           const btn = document.getElementById('btnNewNote');
@@ -33,7 +37,8 @@
     // Logout
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) {
-      btnLogout.addEventListener('click', () => {
+      btnLogout.addEventListener('click', (e) => {
+        e.preventDefault();
         window.Auth.logout();
         window.Utils.toast('Você saiu da sua conta.', 'info');
         window.location.hash = '#/login';
