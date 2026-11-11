@@ -23,6 +23,53 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # precisamos do histórico para gerar o changelog
+          fetch-depth: 50
+
+      - name: Replace __BUILD_ID__ in index.html
+        # Usa o SHA do commit como query-string em todos os assets,
+        # invalidando caches do navegador e do CDN a cada push.
+        run: |
+          sed -i "s/__BUILD_ID__/${GITHUB_SHA::7}/g" notes-app/index.html
+
+      - name: Generate changelog.json
+        # Lista os últimos 20 commits em JSON para o modal de "Novidades".
+        # A primeira entrada é o commit mais recente.
+        run: |
+          mkdir -p notes-app/assets/data
+          python3 - <<'PY'
+          import json, subprocess, os
+          sep = "<<<FIELD>>>"
+          end = "<<<COMMIT>>>"
+          fmt = sep.join(["%H", "%h", "%ad", "%s", "%b"]) + end
+          out = subprocess.check_output(
+              ["git", "log", "-n", "20",
+               "--date=iso-strict", f"--pretty=format:{fmt}"],
+              text=True
+          )
+          entries = []
+          for chunk in out.split(end):
+              chunk = chunk.strip("\n")
+              if not chunk: continue
+              parts = chunk.split(sep)
+              if len(parts) < 5: continue
+              sha, short, date, subject, body = parts
+              entries.append({
+                  "sha": sha, "short_sha": short,
+                  "date": date, "subject": subject,
+                  "body": body.strip(),
+              })
+          data = {
+              "generated_at": subprocess.check_output(
+                  ["date", "-u", "+%Y-%m-%dT%H:%M:%SZ"], text=True).strip(),
+              "sha": entries[0]["sha"] if entries else "",
+              "entries": entries,
+          }
+          with open("notes-app/assets/data/changelog.json", "w") as f:
+              json.dump(data, f, ensure_ascii=False, indent=2)
+          print(f"Wrote {len(entries)} entries")
+          PY
 
       - name: Inject API_KEY into env.js
         # Gera o arquivo env.js com a chave extraída do secret API_KEY.

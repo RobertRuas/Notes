@@ -64,5 +64,8 @@
 
     // Inicia o roteador
     window.Router.start();
+
+    // Verifica novidades (changelog gerado pelo CI)
+    if (window.Changelog) window.Changelog.check();
   });
 })();

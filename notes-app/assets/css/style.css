@@ -256,7 +256,8 @@ a:hover { text-decoration: underline; text-underline-offset: 2px; }
   position: sticky; top: 0; z-index: 1020;
   display: flex; align-items: center; justify-content: space-between;
   gap: 8px;
-  padding: 8px 12px;
+  padding: 0 14px;
+  min-height: 56px;
   background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
@@ -782,5 +783,56 @@ textarea.form-control { height: auto; padding: 8px 10px; }
 /* Form-check-label com fonte menor */
 .form-check-label { font-size: 13px; color: var(--text-muted); }
 
-/* Remove animações de entrada (visual mais estático e sóbrio) */
+/* Remove animações de entrada */
 .auth-card, .page-enter, .note-card, .card { animation: none; }
+
+/* ============================================================
+   Changelog / Patch notes modal
+   ============================================================ */
+.cl-list {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex; flex-direction: column;
+  gap: 14px;
+}
+.cl-entry {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 12px 14px;
+  background: var(--bg-subtle);
+}
+.cl-head {
+  display: flex; align-items: baseline; justify-content: space-between;
+  gap: 10px; flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+.cl-subject {
+  font-weight: 600;
+  color: var(--text);
+  font-size: 13.5px;
+}
+.cl-meta {
+  display: inline-flex; align-items: center; gap: 8px;
+  color: var(--text-subtle);
+  font-size: 11.5px;
+}
+.cl-sha {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 11px;
+  padding: 1px 5px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--text-muted);
+}
+.cl-body {
+  margin: 4px 0 0;
+  padding: 0;
+  font-family: inherit;
+  font-size: 12.5px;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  word-break: break-word;
+  background: transparent;
+  border: none;
+}
