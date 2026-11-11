@@ -1,20 +1,36 @@
 /* ============================================================
  * app.js
- * Ponto de entrada: inicializa o roteador e vincula eventos
- * globais (botão sair da navbar).
+ * Ponto de entrada: inicializa tema/escala, vincula eventos globais
+ * da sidebar (tema, logout, nova nota) e dispara o roteador.
  * ============================================================ */
 
 (function () {
   document.addEventListener('DOMContentLoaded', () => {
-    // Aplica o tema e a escala salvos antes de qualquer renderização
+    // Aplica tema/escala salvos antes de qualquer renderização
     window.Theme.init();
     window.Scale.init();
 
-    // Botão de alternar tema (presente na navbar)
-    const btnTheme = document.getElementById('btnTheme');
-    if (btnTheme) btnTheme.addEventListener('click', () => window.Theme.toggle());
+    // Botões de tema (desktop + mobile)
+    const bindTheme = (id) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('click', () => window.Theme.toggle());
+    };
+    bindTheme('btnTheme');
+    bindTheme('btnThemeMobile');
 
-    // Botão de logout da navbar
+    // Botão "Nova nota" da sidebar
+    const btnNew = document.getElementById('sidebarNewNote');
+    if (btnNew) {
+      btnNew.addEventListener('click', () => {
+        if (window.location.hash !== '#/notes') window.location.hash = '#/notes';
+        setTimeout(() => {
+          const btn = document.getElementById('btnNewNote');
+          if (btn) btn.click();
+        }, 50);
+      });
+    }
+
+    // Logout
     const btnLogout = document.getElementById('btnLogout');
     if (btnLogout) {
       btnLogout.addEventListener('click', () => {
@@ -24,16 +40,24 @@
       });
     }
 
-    // Aviso amigável se a API_KEY não foi injetada em produção
+    // Fecha o offcanvas da sidebar ao clicar num link dela (mobile)
+    document.querySelectorAll('[data-close-sidebar]').forEach((el) => {
+      el.addEventListener('click', () => {
+        const side = document.getElementById('sidebar');
+        const oc = bootstrap.Offcanvas.getInstance(side);
+        if (oc) oc.hide();
+      });
+    });
+
+    // Aviso se API_KEY não foi injetada
     if (!window.AppConfig.API_KEY) {
       window.Utils.toast(
         'API_KEY não configurada. Veja README para configurar o secret.',
-        'warning',
-        6000,
+        'warning', 6000,
       );
     }
 
-    // Inicia o roteador (resolve a rota atual)
+    // Inicia o roteador
     window.Router.start();
   });
 })();

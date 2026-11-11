@@ -168,7 +168,177 @@ a:hover { color: var(--brand-700); text-decoration: underline; }
 }
 
 /* ============================================================
-   Navbar
+   Shell: sidebar + main
+   ============================================================ */
+.app-shell {
+  display: grid;
+  grid-template-columns: 260px 1fr;
+  min-height: 100vh;
+}
+@media (max-width: 991.98px) {
+  .app-shell { grid-template-columns: 1fr; }
+}
+
+.app-sidebar {
+  position: sticky; top: 0;
+  height: 100vh;
+  background: var(--bg-elev);
+  backdrop-filter: var(--bg-blur);
+  -webkit-backdrop-filter: var(--bg-blur);
+  border-right: 1px solid var(--line);
+  display: flex; flex-direction: column;
+  padding: 1.1rem 0.9rem 0.9rem;
+  z-index: 1030;
+}
+/* Em telas pequenas, o offcanvas controla visibilidade */
+@media (max-width: 991.98px) {
+  .app-sidebar {
+    position: fixed;
+    top: 0; left: 0; bottom: 0;
+    height: 100vh; width: 280px;
+    border-right: 1px solid var(--line);
+  }
+}
+
+.sidebar-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0.25rem 0.5rem 1rem;
+  margin-bottom: 0.25rem;
+}
+.sidebar-brand {
+  display: flex; align-items: center; gap: 0.6rem;
+  color: var(--ink-1);
+  font-weight: 700;
+  text-decoration: none;
+}
+.sidebar-brand:hover { color: var(--ink-1); text-decoration: none; }
+
+.sidebar-section { padding: 0 0.5rem 0.75rem; }
+.sidebar-section-label {
+  padding: 0.75rem 0.75rem 0.4rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.sidebar-nav {
+  display: flex; flex-direction: column;
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 0 0.25rem;
+}
+.sidebar-nav .nav-link {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.55rem 0.75rem;
+  margin: 0.1rem 0;
+  border-radius: 10px;
+  color: var(--ink-2);
+  font-size: 0.93rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  position: relative;
+}
+.sidebar-nav .nav-link i { font-size: 1.05rem; width: 20px; text-align: center; }
+.sidebar-nav .nav-link:hover {
+  background: var(--bg-2);
+  color: var(--ink-1);
+}
+.sidebar-nav .nav-link.active {
+  background: var(--brand-50);
+  color: var(--brand-ink);
+}
+[data-bs-theme="dark"] .sidebar-nav .nav-link.active {
+  color: var(--brand-600);
+}
+.sidebar-nav .nav-link.active::before {
+  content: "";
+  position: absolute; left: -0.25rem; top: 20%; bottom: 20%;
+  width: 3px; border-radius: 3px;
+  background: var(--brand-500);
+}
+
+.sidebar-footer {
+  padding: 0.5rem;
+  border-top: 1px solid var(--line);
+  margin-top: 0.5rem;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--ink-2);
+  text-align: left;
+  display: inline-flex; align-items: center;
+  padding: 0.5rem 0.75rem;
+  border-radius: 10px;
+  font-weight: 500;
+  font-size: 0.92rem;
+  transition: all 0.15s ease;
+}
+.btn-ghost:hover { background: var(--bg-2); color: var(--ink-1); border-color: var(--line); }
+.btn-icon-sm {
+  width: 32px; height: 32px;
+  display: inline-flex; align-items: center; justify-content: center;
+  padding: 0; border-radius: 8px;
+  background: transparent; border: none;
+  color: var(--ink-3);
+}
+.btn-icon-sm:hover { background: var(--bg-2); color: var(--ink-1); }
+
+.user-card {
+  display: flex; align-items: center; gap: 0.6rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+  background: var(--bg-2);
+  border: 1px solid var(--line);
+}
+.user-card .avatar { width: 34px; height: 34px; font-size: 0.82rem; flex-shrink: 0; }
+.user-info { flex-grow: 1; min-width: 0; }
+.user-name {
+  font-weight: 600; font-size: 0.88rem;
+  color: var(--ink-1);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.user-email {
+  font-size: 0.75rem;
+  color: var(--ink-3);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+
+/* Área principal */
+.app-main {
+  display: flex; flex-direction: column;
+  min-width: 0;
+}
+.app-topbar {
+  position: sticky; top: 0; z-index: 1020;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--bg-elev);
+  backdrop-filter: var(--bg-blur);
+  -webkit-backdrop-filter: var(--bg-blur);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-brand {
+  display: flex; align-items: center; gap: 0.5rem;
+  color: var(--ink-1); font-weight: 700;
+  text-decoration: none;
+}
+.topbar-brand:hover { color: var(--ink-1); text-decoration: none; }
+
+.app-content {
+  padding: 2rem 2rem 3rem;
+  max-width: 1280px;
+  width: 100%;
+  margin: 0 auto;
+}
+@media (max-width: 575px) { .app-content { padding: 1.25rem 1rem 2.5rem; } }
+
+/* ============================================================
+   Navbar legado (não mais usado, mantido por compat)
    ============================================================ */
 
 .app-navbar {

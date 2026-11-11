@@ -7,20 +7,30 @@
 window.UI = (() => {
   const { escapeHtml, formatDate, toast, sanitizeHtml, htmlToText } = window.Utils;
 
+  const shell = () => document.getElementById('shell');
   const app = () => document.getElementById('app');
-  const navbar = () => document.getElementById('navbar');
+  const publicApp = () => document.getElementById('publicApp');
   const userLabel = () => document.getElementById('userLabel');
+  const userEmail = () => document.getElementById('userEmail');
   const userAvatar = () => document.getElementById('userAvatar');
 
   let notesCache = [];
   let currentFilter = '';
   let editingId = null;
 
-  /** Atualiza o rótulo e o avatar do usuário na navbar. */
+  /** Alterna entre layout "público" (login/cadastro) e "app" (com sidebar). */
+  function showShell(show) {
+    shell().classList.toggle('d-none', !show);
+    publicApp().classList.toggle('d-none', show);
+    publicApp().innerHTML = show ? '' : publicApp().innerHTML;
+  }
+
+  /** Atualiza avatar, nome e e-mail no card da sidebar. */
   function refreshUserBadge() {
     const u = window.Auth.currentUser();
     if (!u) return;
     userLabel().textContent = u.name || u.email;
+    userEmail().textContent = u.email || '';
     const initials = (u.name || u.email || '?')
       .split(/[\s@._-]+/).filter(Boolean)
       .slice(0, 2).map((s) => s[0]).join('')
@@ -28,12 +38,19 @@ window.UI = (() => {
     userAvatar().textContent = initials;
   }
 
+  /** Marca o item ativo da sidebar com base na rota atual. */
+  function highlightNav(route) {
+    document.querySelectorAll('.sidebar-nav .nav-link').forEach((el) => {
+      el.classList.toggle('active', el.dataset.nav === route);
+    });
+  }
+
   // ------------------------------------------------------------
   //  Login
   // ------------------------------------------------------------
   function renderLogin() {
-    navbar().classList.add('d-none');
-    app().innerHTML = `
+    showShell(false);
+    publicApp().innerHTML = `
       <div class="auth-wrapper">
         <div class="card auth-card">
           <div class="card-body">
@@ -103,8 +120,8 @@ window.UI = (() => {
   //  Cadastro
   // ------------------------------------------------------------
   function renderRegister() {
-    navbar().classList.add('d-none');
-    app().innerHTML = `
+    showShell(false);
+    publicApp().innerHTML = `
       <div class="auth-wrapper">
         <div class="card auth-card">
           <div class="card-body">
@@ -188,8 +205,9 @@ window.UI = (() => {
     const user = window.Auth.currentUser();
     if (!user) { window.location.hash = '#/login'; return; }
 
-    navbar().classList.remove('d-none');
+    showShell(true);
     refreshUserBadge();
+    highlightNav('#/notes');
 
     app().innerHTML = `
       <div class="page-enter d-flex flex-column flex-md-row justify-content-between align-items-md-end gap-3 mb-4">
@@ -523,8 +541,9 @@ window.UI = (() => {
   function renderProfile() {
     const user = window.Auth.currentUser();
     if (!user) { window.location.hash = '#/login'; return; }
-    navbar().classList.remove('d-none');
+    showShell(true);
     refreshUserBadge();
+    highlightNav('#/profile');
 
     app().innerHTML = `
       <div class="page-enter">
@@ -650,8 +669,9 @@ window.UI = (() => {
   function renderSettings() {
     const user = window.Auth.currentUser();
     if (!user) { window.location.hash = '#/login'; return; }
-    navbar().classList.remove('d-none');
+    showShell(true);
     refreshUserBadge();
+    highlightNav('#/settings');
 
     const theme = window.Theme.current();
     const scale = window.Scale.current();
