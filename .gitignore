@@ -1,0 +1,14 @@
+# Nunca commitar o env.js — ele contém a chave de API (criado pelo CI).
+notes-app/assets/js/env.js
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Editores
+.vscode/
+.idea/
+*.swp
+
+# Logs
+*.log

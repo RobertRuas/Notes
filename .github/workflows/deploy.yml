@@ -1,0 +1,61 @@
+name: Deploy to GitHub Pages
+
+# Dispara a cada push na branch principal (e permite rodar manualmente)
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Permissões necessárias para publicar no GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Garante que apenas um deploy por vez rode (evita race conditions)
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Inject API_KEY into env.js
+        # Gera o arquivo env.js com a chave extraída do secret API_KEY.
+        # O arquivo não é commitado — é criado só no build e enviado como artefato.
+        run: |
+          mkdir -p notes-app/assets/js
+          cat > notes-app/assets/js/env.js <<EOF
+          /* Auto-gerado pelo GitHub Actions. Não editar manualmente. */
+          window.AppEnv = {
+            API_KEY: "${{ secrets.API_KEY }}"
+          };
+          EOF
+
+      - name: Add .nojekyll
+        # Impede o Jekyll do GitHub Pages de ignorar pastas com "_" etc.
+        run: touch notes-app/.nojekyll
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          # Publica apenas a pasta notes-app (onde está o index.html)
+          path: ./notes-app
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

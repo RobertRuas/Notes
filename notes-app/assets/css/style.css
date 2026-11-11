@@ -1,0 +1,115 @@
+/* ============================================================
+   Estilos customizados do Bloco de Notas
+   ============================================================ */
+
+/* Faz o body ocupar toda a altura para footer "grudar" quando vazio */
+html, body {
+  min-height: 100vh;
+}
+
+/* ---- Tela de autenticação (login/cadastro) ---- */
+.auth-wrapper {
+  max-width: 420px;
+  margin: 3rem auto;
+}
+
+.auth-card {
+  border: none;
+  border-radius: 1rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.auth-card .card-body {
+  padding: 2rem;
+}
+
+.auth-logo {
+  font-size: 2.5rem;
+  color: var(--bs-primary);
+}
+
+/* ---- Lista de notas ---- */
+.note-card {
+  border: none;
+  border-radius: 0.75rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  height: 100%;
+}
+
+.note-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* Trunca o conteúdo a 4 linhas, mostrando "..." no final */
+.note-content-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  color: var(--bs-secondary-color);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.note-title {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  word-break: break-word;
+}
+
+.note-date {
+  font-size: 0.78rem;
+  color: var(--bs-tertiary-color);
+}
+
+/* "Pino" de nota fixada */
+.note-pinned-badge {
+  color: var(--bs-warning);
+}
+
+/* ---- Editor de nota (modal) ---- */
+#editorModal .modal-body textarea {
+  min-height: 260px;
+  resize: vertical;
+}
+
+/* ---- Estado "sem notas" ---- */
+.empty-state {
+  text-align: center;
+  padding: 4rem 1rem;
+  color: var(--bs-secondary-color);
+}
+
+.empty-state i {
+  font-size: 4rem;
+  opacity: 0.4;
+}
+
+/* ---- Previne zoom automático no Safari iOS ----
+   O Safari dá zoom quando um campo recebe foco e sua fonte é < 16px.
+   Forçamos 16px em todos os campos editáveis. */
+input,
+select,
+textarea,
+.form-control,
+.form-select {
+  font-size: 16px;
+}
+
+/* Também garante que o container principal nunca gere scroll horizontal
+   em telas estreitas (requisito 100% responsivo). */
+body {
+  overflow-x: hidden;
+}
+
+/* ---- Pequenos ajustes responsivos ---- */
+@media (max-width: 575px) {
+  .auth-wrapper {
+    margin: 1rem auto;
+  }
+  .auth-card .card-body {
+    padding: 1.25rem;
+  }
+}
