@@ -6,8 +6,9 @@
 
 (function () {
   document.addEventListener('DOMContentLoaded', () => {
-    // Aplica o tema salvo antes de qualquer renderização
+    // Aplica o tema e a escala salvos antes de qualquer renderização
     window.Theme.init();
+    window.Scale.init();
 
     // Botão de alternar tema (presente na navbar)
     const btnTheme = document.getElementById('btnTheme');

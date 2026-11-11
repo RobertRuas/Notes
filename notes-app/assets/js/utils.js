@@ -77,5 +77,60 @@ window.Utils = (() => {
     return Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
   }
 
-  return { sha256, formatDate, escapeHtml, toast, randomId };
+  /**
+   * Sanitiza uma string HTML permitindo apenas um conjunto seguro de
+   * tags/atributos. Remove scripts, event handlers e `javascript:` em href.
+   */
+  function sanitizeHtml(html) {
+    const allowed = new Set([
+      'B','STRONG','I','EM','U','S','STRIKE','BR','P','DIV',
+      'UL','OL','LI','H2','H3','H4','BLOCKQUOTE','A','SPAN',
+    ]);
+    const template = document.createElement('template');
+    template.innerHTML = String(html || '');
+    const walk = (node) => {
+      const children = [...node.childNodes];
+      for (const child of children) {
+        if (child.nodeType === 1) { // Element
+          if (!allowed.has(child.tagName)) {
+            // Preserva o texto, descarta a tag
+            const frag = document.createDocumentFragment();
+            while (child.firstChild) frag.appendChild(child.firstChild);
+            child.replaceWith(frag);
+            continue;
+          }
+          // Remove todos os atributos exceto href em <a>
+          for (const attr of [...child.attributes]) {
+            if (child.tagName === 'A' && attr.name === 'href') {
+              const v = String(attr.value || '').trim().toLowerCase();
+              if (v.startsWith('javascript:') || v.startsWith('data:')) {
+                child.removeAttribute('href');
+              }
+            } else {
+              child.removeAttribute(attr.name);
+            }
+          }
+          if (child.tagName === 'A') {
+            child.setAttribute('target', '_blank');
+            child.setAttribute('rel', 'noopener noreferrer');
+          }
+          walk(child);
+        } else if (child.nodeType !== 3) {
+          // Remove comentários e demais nós não-texto
+          child.remove();
+        }
+      }
+    };
+    walk(template.content);
+    return template.innerHTML;
+  }
+
+  /** Converte HTML em texto plano (útil para previews/snippets). */
+  function htmlToText(html) {
+    const div = document.createElement('div');
+    div.innerHTML = String(html || '');
+    return (div.textContent || '').replace(/\s+/g, ' ').trim();
+  }
+
+  return { sha256, formatDate, escapeHtml, toast, randomId, sanitizeHtml, htmlToText };
 })();
